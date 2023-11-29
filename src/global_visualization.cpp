@@ -10,6 +10,7 @@
 
 #include <tf2_ros/transform_listener.h>
 #include <tf2_ros/transform_broadcaster.h>
+#include <tf2_sensor_msgs/tf2_sensor_msgs.h>
 #include <tf2_ros/buffer.h>  // TF2 버퍼를 사용하기 위한 헤더
 
 #include <nav_msgs/msg/path.hpp>
@@ -154,15 +155,18 @@ private:
         std::string thisFrame)
     {
 
-        cout << "publishRGBCloud" << endl;
-        if (thisPub->get_subscription_count() == 0)
-            return;
+        cout << "publishRGBCloud---------" << endl;
+        // if (thisPub->get_subscription_count() == 0)
+        //     return;
         sensor_msgs::msg::PointCloud2 transform_tempCloud;
 
         sensor_msgs::msg::PointCloud2 tempCloud;
         pcl::toROSMsg(*thisCloud, tempCloud);
         tempCloud.header.stamp = thisStamp;
         tempCloud.header.frame_id = thisFrame;
+                    // 변환 정보 검색
+        rclcpp::Time desired_time = rclcpp::Node::now();
+ 
 
         try
         {
@@ -170,21 +174,14 @@ private:
             geometry_msgs::msg::TransformStamped transformStamped;
             transformStamped = tf_buffer->lookupTransform("map", thisFrame, thisStamp);
             
-            std::cout << "try" << std::endl;
-            std::cout << "transformStamped : " << transformStamped.header.frame_id << std::endl;
-            std::cout << "transformStamped : " << transformStamped.child_frame_id << std::endl;
-            std::cout << "transformStamped : " << transformStamped.transform.translation.x << std::endl;
+            tf2::doTransform(tempCloud, transform_tempCloud, transformStamped);
 
-            // tf2::doTransform을 사용하여 변환 적용
-            // tf2::doTransform(tempCloud, transform_tempCloud, transformStamped);
-
-            // thisPub->publish(transform_tempCloud);
+            thisPub->publish(transform_tempCloud);
         }
         catch (tf2::TransformException &ex)
         {
-            std::cout << "catch" << std::endl;
-
-            RCLCPP_ERROR(rclcpp::get_logger("publishRGBCloud"), "%s", ex.what());
+            // std::cout << "catch" << std::endl;
+            // RCLCPP_ERROR(rclcpp::get_logger("publishRGBCloud"), "%s", ex.what());
         }
 
     }
@@ -219,8 +216,6 @@ private:
 
         // Buffer에 변환 정보 저장
         tf_buffer->setTransform(transformStamped, "odometryCallback");
-        // tf_buffer size 확인
-        std::cout << "tf_buffer size : " << tf_buffer->size() << std::endl;
     }
 
     void pointCloudCallback(const sensor_msgs::msg::PointCloud2::SharedPtr cloud_msg)
@@ -358,7 +353,7 @@ private:
     rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr sub_cloud;
     rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr sub_odom;
 
-    std::shared_ptr<tf2_ros::Buffer::Buffer> tf_buffer;
+    std::shared_ptr<tf2_ros::Buffer> tf_buffer;
     std::shared_ptr<tf2_ros::TransformListener> tf_listener;
     tf2::Transform inv_transform;
 };

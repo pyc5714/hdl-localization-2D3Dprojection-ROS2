@@ -71,7 +71,7 @@ void publishRGBCloud(
 
 void setCameraLidarTf()  
 {
-  pixel_classes.resize(480, std::vector<int>(640));
+  pixel_classes.resize(540, std::vector<int>(960));
 
   L_C_TX = 0.143;
   L_C_TY = -0.30;
@@ -181,7 +181,7 @@ private:
 
       // Using the camera matrix, project 3D points to 2D image plane
       cv::Point2f pixel = project3DTo2D(point_.x, point_.y, point_.z, camera_matrix);
-      if ((int)pixel.x < 0 || (int)pixel.x >= 640 || (int)pixel.y < 0 || (int)pixel.y >= 480)
+      if ((int)pixel.x < 0 || (int)pixel.x >= 960 || (int)pixel.y < 0 || (int)pixel.y >= 540)
       {
         // std::cout << "FOV" << std::endl ;
         // point_.r = 255;  // Set the red channel value
@@ -253,8 +253,16 @@ private:
 
       // Now pixel corresponds to the point in the image
     }
+
+        // L_C_TX = 0.143;     
+        // L_C_TY = -0.30;
+        // L_C_TZ = -0.012;
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr transformed_outside_image_RGB_cloud(new pcl::PointCloud<pcl::PointXYZRGB>());
+    Eigen::Affine3f transOffset = pcl::getTransformation(-L_C_TX,-L_C_TY,-L_C_TZ,M_PI/2,-M_PI,M_PI/2);
+    pcl::transformPointCloud(*outside_image_RGB_cloud, *transformed_outside_image_RGB_cloud, transOffset);
+
     cout << "outsinde_images_RGB_size : " << outside_image_RGB_cloud->size() << endl;
-    publishRGBCloud(pub_1, outside_image_RGB_cloud, rclcpp::Time(cloud_msg->header.stamp), "velodyne");
+    publishRGBCloud(pub_1, transformed_outside_image_RGB_cloud, rclcpp::Time(cloud_msg->header.stamp), "velodyne");
     outside_image_RGB_cloud->clear();
 
   }

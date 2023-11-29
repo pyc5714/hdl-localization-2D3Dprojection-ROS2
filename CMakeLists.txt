@@ -15,6 +15,7 @@ find_package(sensor_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
+find_package(tf2_sensor_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(PCL 1.7 REQUIRED)
 find_package(OpenCV REQUIRED)
@@ -37,6 +38,7 @@ ament_target_dependencies(local_visualization
   nav_msgs
   geometry_msgs
   tf2_ros
+  tf2_sensor_msgs
   tf2
   PCL
   OpenCV
@@ -53,6 +55,7 @@ ament_target_dependencies(global_visualization
   nav_msgs
   geometry_msgs
   tf2_ros
+  tf2_sensor_msgs
   tf2
   PCL
   OpenCV
@@ -66,7 +69,7 @@ target_link_libraries(global_visualization
 # 설치 및 테스트 설정
 install(TARGETS
   local_visualization
-  global_visualization
+  # global_visualization
   DESTINATION lib/${PROJECT_NAME}
 )
 
