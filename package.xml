@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>visualization</name>
+  <version>0.0.0</version>
+  <description>visualization</description>
+
+  <license>BSD</license>
+
+  <!-- 유지 관리자 정보 추가 -->
+  <maintainer email="pyc5714@example.com">yechan park</maintainer>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>rclcpp</depend>
+  <depend>sensor_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>tf2_ros</depend>
+  <depend>tf2</depend>
+  <depend>pcl_conversions</depend>
+  <depend>opencv</depend>
+  <depend>cv_bridge</depend>
+  <depend>PCL</depend>
+  <depend>OpenCV</depend>
+  
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
