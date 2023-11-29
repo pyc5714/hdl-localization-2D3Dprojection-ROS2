@@ -41,8 +41,11 @@ catkin_ws
 
 ## 5. manual
 you need 5 terminal windows
-
-**default setting :** 
+```
+docker start inference_ros2
+docker exec -it inference_ros2 /bin/bash
+```
+**default setting :**
 ```
 source /opt/ros/foxy/setup.bash
 source /home/ROS2_hdl_localization/install/setup.bash
